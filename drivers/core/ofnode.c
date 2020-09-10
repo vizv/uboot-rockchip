@@ -356,7 +356,9 @@ int ofnode_parse_phandle_with_args(ofnode node, const char *list_name,
 		int ret;
 
 		ret = of_parse_phandle_with_args(ofnode_to_np(node),
-				list_name, cells_name, index, &args);
+						 list_name, cells_name,
+						 cell_count, index,
+						 &args);
 		if (ret)
 			return ret;
 		ofnode_from_of_phandle_args(&args, out_args);
