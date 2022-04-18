@@ -1094,6 +1094,7 @@ static int dw_hdmi_setup(struct dw_hdmi_qp *hdmi,
 		hdmi_modb(hdmi, PKTSCHED_GCP_TX_EN, PKTSCHED_GCP_TX_EN,
 			  PKTSCHED_PKT_EN);
 	} else {
+		hdmi_modb(hdmi, HDCP2_BYPASS, HDCP2_BYPASS, HDCP2LOGIC_CONFIG0);
 		hdmi_modb(hdmi, OPMODE_DVI, OPMODE_DVI, LINK_CONFIG0);
 		ret = hdmi->phy.ops->init(conn, hdmi->rk_hdmi, state);
 		if (ret)
