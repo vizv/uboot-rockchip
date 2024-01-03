@@ -339,9 +339,18 @@ echo "
 function gen_arm64_configurations()
 {
 PLATFORM=`sed -n "/CONFIG_DEFAULT_DEVICE_TREE/p" .config | awk -F "=" '{ print $2 }' | tr -d '"'`
-if grep  -q '^CONFIG_FIT_ENABLE_RSASSA_PSS_SUPPORT=y' .config ; then
+if grep -q '^CONFIG_FIT_ENABLE_RSASSA_PSS_SUPPORT=y' .config ; then
 	ALGO_PADDING="				padding = \"pss\";"
 fi
+if grep -q '^CONFIG_FIT_ENABLE_RSA4096_SUPPORT=y' .config ; then
+	ALGO_NAME="				algo = \"sha256,rsa4096\";"
+else
+	ALGO_NAME="				algo = \"sha256,rsa2048\";"
+fi
+if [ -z "${LOADABLE_ATF}" ]; then
+	LOADABLE_UBOOT="\"uboot\""
+fi
+
 echo "	};
 
 	configurations {
@@ -354,7 +363,7 @@ echo "	};
 			${STANDALONE_MCU}
 			${FDT}
 			signature {
-				algo = \"sha256,rsa2048\";
+				${ALGO_NAME}
 				${ALGO_PADDING}
 				key-name-hint = \"dev\";
 				sign-images = \"firmware\", \"loadables\"${FDT_SIGN}${STANDALONE_SIGN};
@@ -368,8 +377,13 @@ echo "	};
 function gen_arm_configurations()
 {
 PLATFORM=`sed -n "/CONFIG_DEFAULT_DEVICE_TREE/p" .config | awk -F "=" '{ print $2 }' | tr -d '"'`
-if grep  -q '^CONFIG_FIT_ENABLE_RSASSA_PSS_SUPPORT=y' .config ; then
+if grep -q '^CONFIG_FIT_ENABLE_RSASSA_PSS_SUPPORT=y' .config ; then
         ALGO_PADDING="                          padding = \"pss\";"
+fi
+if grep -q '^CONFIG_FIT_ENABLE_RSA4096_SUPPORT=y' .config ; then
+	ALGO_NAME="				algo = \"sha256,rsa4096\";"
+else
+	ALGO_NAME="				algo = \"sha256,rsa2048\";"
 fi
 if [ ! -z "${LOADABLE_UBOOT}" ] || [ ! -z "${LOADABLE_OTHER}" ]; then
 	LOADABLE_UBOOT="\"uboot\""
@@ -393,7 +407,7 @@ echo "	};
 			${STANDALONE_MCU}
 			${FDT}
 			signature {
-				algo = \"sha256,rsa2048\";
+				${ALGO_NAME}
 				${ALGO_PADDING}
 				key-name-hint = \"dev\";
 				sign-images = ${FIRMWARE_SIGN}${LOADABLES_SIGN}${FDT_SIGN}${STANDALONE_SIGN};
