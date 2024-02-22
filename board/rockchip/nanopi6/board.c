@@ -41,6 +41,31 @@ int board_usb_init(int index, enum usb_init_type init)
 }
 #endif
 
+/* Supported panels and dpi for nanopi6 series */
+static char *panels[] = {
+	"HD702E,213dpi",
+	"HD703E,213dpi",
+	"HDMI1024x768,165dpi",
+	"HDMI1280x800,168dpi",
+};
+
+char *board_get_panel_name(void)
+{
+	char *name;
+	int i;
+
+	name = env_get("panel");
+	if (!name)
+		return NULL;
+
+	for (i = 0; i < ARRAY_SIZE(panels); i++) {
+		if (!strncmp(panels[i], name, strlen(name)))
+			return panels[i];
+	}
+
+	return name;
+}
+
 int board_select_fdt_index(ulong dt_table_hdr, struct blk_desc *dev_desc)
 {
 	return (dev_desc ? dev_desc->devnum : 0);
