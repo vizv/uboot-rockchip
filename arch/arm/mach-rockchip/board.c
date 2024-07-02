@@ -94,6 +94,17 @@ __weak int rk_board_init(void)
 	return 0;
 }
 
+static void rockchip_rng_init(void)
+{
+#ifdef CONFIG_DM_RNG
+	struct udevice *dev;
+
+	if (uclass_get_device(UCLASS_RNG, 0, &dev) || !dev) {
+		printf("No RNG device\n");
+	}
+#endif
+}
+
 #ifdef CONFIG_ROCKCHIP_SET_ETHADDR
 /*
  * define serialno max length, the max length is 512 Bytes
@@ -452,6 +463,7 @@ __weak void set_dtb_name(void)
 
 int board_late_init(void)
 {
+	rockchip_rng_init();
 #ifdef CONFIG_ROCKCHIP_SET_ETHADDR
 	rockchip_set_ethaddr();
 #endif
