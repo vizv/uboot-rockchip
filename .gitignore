@@ -28,6 +28,11 @@
 # Build tree
 /build-*
 /rockdev
+/bl31*.bin.digest
+/bl31*.bin.gz
+/tee.bin.digest
+/tee.bin.gz
+
 #
 # Top-level generic files
 #
