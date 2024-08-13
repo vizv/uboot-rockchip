@@ -118,11 +118,23 @@ int rockchip_connector_init(struct display_state *state)
 	return ret;
 }
 
+__weak int rk_board_panel_detect(struct udevice *dev)
+{
+    return 0;
+}
 
 static bool rockchip_connector_path_detect(struct rockchip_connector *conn,
 					   struct display_state *state)
 {
 	int ret;
+
+	if (conn->panel) {
+		ret = rk_board_panel_detect(conn->panel->dev);
+		if (ret == -ENODEV) {
+			printf("%s disconnected\n", conn->dev->name);
+			return false;
+		}
+	}
 
 	if (conn->funcs->detect) {
 		ret = conn->funcs->detect(conn, state);
