@@ -1054,12 +1054,14 @@ static int display_logo(struct display_state *state)
 		if (crtc_state->src_rect.h >= vdisplay) {
 			crtc_state->crtc_rect.y = 0;
 			crtc_state->crtc_rect.h = vdisplay;
-		} else if (crtc_state->src_rect.w > hdisplay) {
-			crtc_state->crtc_rect.h = (crtc_state->src_rect.h * hdisplay) / crtc_state->src_rect.w;
-			crtc_state->crtc_rect.y = (vdisplay - crtc_state->crtc_rect.h) / 2;
 		} else {
 			crtc_state->crtc_rect.y = (vdisplay - crtc_state->src_rect.h) / 2;
 			crtc_state->crtc_rect.h = crtc_state->src_rect.h;
+		}
+
+		if (crtc_state->src_rect.w > hdisplay) {
+			crtc_state->crtc_rect.h = (crtc_state->src_rect.h * hdisplay) / crtc_state->src_rect.w;
+			crtc_state->crtc_rect.y = (vdisplay - crtc_state->crtc_rect.h) / 2;
 		}
 	}
 
