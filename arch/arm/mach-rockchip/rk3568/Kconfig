@@ -13,6 +13,13 @@ config TARGET_NANOPI5
 	help
 	  Support for FriendlyElec boards based on RK3568.
 
+config TARGET_NANOPI_R3
+	bool "FriendlyElec NanoPi R3 Series"
+	select BOARD_LATE_INIT
+	select VENDOR_FRIENDLYELEC
+	help
+	  Support for FriendlyElec boards based on RK3566.
+
 config SYS_SOC
 	default "rockchip"
 
@@ -21,5 +28,6 @@ config SYS_MALLOC_F_LEN
 
 source board/rockchip/evb_rk3568/Kconfig
 source board/rockchip/nanopi5/Kconfig
+source board/rockchip/nanopi_r3/Kconfig
 
 endif

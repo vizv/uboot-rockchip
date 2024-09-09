@@ -1,0 +1,122 @@
+/*
+ * SPDX-License-Identifier:     GPL-2.0+
+ *
+ * (C) Copyright 2024 FriendlyElec Computer Tech. Co., Ltd.
+ * (https://www.friendlyelec.com)
+ *
+ * (C) Copyright 2020 Rockchip Electronics Co., Ltd
+ */
+
+/dts-v1/;
+#include "rk3568.dtsi"
+#include "rk3568-u-boot.dtsi"
+#include <dt-bindings/input/input.h>
+
+/ {
+	model = "FriendlyElec boards based on Rockchip RK356X";
+	compatible = "friendlyelec,nanopi-r3",
+		     "rockchip,rk3568-evb", "rockchip,rk3568";
+
+	adc-keys {
+		compatible = "adc-keys";
+		io-channels = <&saradc 0>;
+		io-channel-names = "buttons";
+		keyup-threshold-microvolt = <1800000>;
+		u-boot,dm-spl;
+		status = "okay";
+
+		volumeup-key {
+			u-boot,dm-spl;
+			linux,code = <KEY_VOLUMEUP>;
+			label = "volume up";
+			press-threshold-microvolt = <9>;
+		};
+	};
+
+	otp: otp@fe38c000 {
+		compatible = "rockchip,rk3568-otp";
+		reg = <0x0 0xfe38c000 0x0 0x4000>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		clocks = <&cru CLK_OTPC_NS_USR>, <&cru CLK_OTPC_NS_SBPI>,
+			 <&cru PCLK_OTPC_NS>, <&cru PCLK_OTPPHY>;
+		clock-names = "usr", "sbpi", "apb", "phy";
+		resets = <&cru SRST_OTPPHY>;
+		reset-names = "otp_phy";
+		u-boot,dm-spl;
+
+		/* Data cells */
+		cpu_code: cpu-code@2 {
+			reg = <0x02 0x2>;
+		};
+		specification_serial_number: specification-serial-number@7 {
+			reg = <0x07 0x1>;
+			bits = <0 5>;
+		};
+		otp_cpu_version: cpu-version@8 {
+			reg = <0x08 0x1>;
+			bits = <3 3>;
+		};
+		mbist_vmin: mbist-vmin@9 {
+			reg = <0x09 0x1>;
+			bits = <0 4>;
+		};
+		otp_id: id@a {
+			reg = <0x0a 0x10>;
+		};
+		cpu_leakage: cpu-leakage@1a {
+			reg = <0x1a 0x1>;
+		};
+		log_leakage: log-leakage@1b {
+			reg = <0x1b 0x1>;
+		};
+		npu_leakage: npu-leakage@1c {
+			reg = <0x1c 0x1>;
+		};
+		gpu_leakage: gpu-leakage@1d {
+			reg = <0x1d 0x1>;
+		};
+	};
+};
+
+&gmac1 {
+	phy-mode = "rgmii";
+	clock_in_out = "output";
+
+	snps,reset-gpio = <&gpio4 RK_PC2 GPIO_ACTIVE_LOW>;
+	snps,reset-active-low;
+	/* Reset time is 15ms, 50ms for rtl8211f */
+	snps,reset-delays-us = <0 15000 50000>;
+
+	assigned-clocks = <&cru SCLK_GMAC1_RX_TX>, <&cru SCLK_GMAC1>;
+	assigned-clock-parents = <&cru SCLK_GMAC1_RGMII_SPEED>, <&cru CLK_MAC1_2TOP>;
+	assigned-clock-rates = <0>, <125000000>;
+
+	pinctrl-names = "default";
+	pinctrl-0 = <&gmac1m0_miim
+		     &gmac1m0_tx_bus2_level3
+		     &gmac1m0_rx_bus2
+		     &gmac1m0_rgmii_clk_level2
+		     &gmac1m0_rgmii_bus_level3>;
+
+	tx_delay = <0x3c>;
+	rx_delay = <0x2f>;
+
+	phy-handle = <&rgmii_phy1>;
+	status = "disabled";
+};
+
+&mdio1 {
+	rgmii_phy1: phy@0 {
+		compatible = "ethernet-phy-ieee802.3-c22";
+		reg = <0x0>;
+	};
+};
+
+&crypto {
+	status = "okay";
+};
+
+&uart2 {
+	status = "okay";
+};
