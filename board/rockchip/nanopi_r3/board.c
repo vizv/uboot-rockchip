@@ -99,7 +99,7 @@ static int mac_read_from_generic_eeprom(u8 *addr)
 	int ret;
 
 	/* Microchip 24AA02xxx EEPROMs with EUI-48 Node Identity */
-	ret = i2c_get_chip_for_busnum(5, 0x53, 1, &i2c_dev);
+	ret = i2c_get_chip_for_busnum(1, 0x53, 1, &i2c_dev);
 	if (!ret)
 		ret = dm_i2c_read(i2c_dev, 0xfa, addr, 6);
 
